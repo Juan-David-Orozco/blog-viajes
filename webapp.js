@@ -38,6 +38,56 @@ aplicacion.get('/', function (peticion, respuesta) {
   })
 })
 
+aplicacion.get('/registro', function (peticion, respuesta) {
+  respuesta.render('registro', { mensaje: peticion.flash('mensaje') })
+})
+
+aplicacion.post('/procesar_registro', function (peticion, respuesta) {
+  pool.getConnection(function(err, connection) {
+    
+    const email = peticion.body.email.toLowerCase().trim()
+    const pseudonimo = peticion.body.pseudonimo.trim()
+    const contrasena = peticion.body.contrasena
+
+    const consultaEmail = 
+    `SELECT * FROM autores WHERE email = ${connection.escape(email)}`
+    connection.query(consultaEmail, function (error, filas, campos) {
+
+      if (filas.length > 0) {
+        peticion.flash('mensaje', 'Email duplicado')
+        respuesta.redirect('/registro')
+      }
+      else {
+        const consultaPseudonimo =
+        `SELECT * FROM autores WHERE pseudonimo = ${connection.escape(pseudonimo)}`
+        connection.query(consultaPseudonimo, function (error, filas, campos) {
+          if (filas.length > 0) {
+            peticion.flash('mensaje', 'Pseudonimo duplicado')
+            respuesta.redirect('/registro')
+          }
+          else {
+            const consulta = 
+            `INSERT INTO autores (email, contrasena, pseudonimo) VALUES
+            (
+              ${connection.escape(email)},
+              ${connection.escape(contrasena)},
+              ${connection.escape(pseudonimo)}
+            )
+            `
+            connection.query(consulta, function (error, filas, campos) {
+              peticion.flash('mensaje', 'Usuario Registrado')
+              respuesta.redirect('/registro')
+            })
+          }
+        })
+      }
+
+    })
+    connection.release()
+
+  })
+})
+
 aplicacion.listen(8080, function(){
   console.log("Servidor iniciado")
 })
