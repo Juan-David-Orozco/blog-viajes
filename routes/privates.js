@@ -60,6 +60,82 @@ router.post('/admin/procesar_agregar', (peticion, respuesta) => {
     connection.release()
   })
 })
-// -------      Fin Módulo Publicar y Crear -------------- // 
+// -------      Fin Módulo Publicar y Crear -------------- //
+
+// -------      Módulo Editar y Eliminar Publicacion  -------------- //
+// Editar
+router.get('/admin/editar/:id', (peticion, respuesta) => {
+  pool.getConnection((err, connection) => {
+    const consulta = `
+      SELECT * FROM publicaciones
+      WHERE
+      id = ${connection.escape(peticion.params.id)}
+      AND
+      autor_id = ${connection.escape(peticion.session.usuario.id)}
+    `
+    connection.query(consulta, (error, filas, campos) => {
+      if (filas.length > 0){
+        respuesta.render('admin/editar', {publicacion: filas[0], mensaje: peticion.flash('mensaje'), usuario: peticion.session.usuario})
+      }
+      else{
+        peticion.flash('mensaje', 'Operación no permitida')
+        respuesta.redirect("/admin/index")
+      }
+    })
+    connection.release()
+  })
+})
+
+router.post('/admin/procesar_editar', (peticion, respuesta) => {
+  pool.getConnection((err, connection) => {
+    const consulta = `
+      UPDATE publicaciones
+      SET
+      titulo = ${connection.escape(peticion.body.titulo)},
+      resumen = ${connection.escape(peticion.body.resumen)},
+      contenido = ${connection.escape(peticion.body.contenido)}
+      WHERE
+      id = ${connection.escape(peticion.body.id)}
+      AND
+      autor_id = ${connection.escape(peticion.session.usuario.id)}
+    `
+    connection.query(consulta, (error, filas, campos) => {
+      if (filas && filas.changedRows > 0){
+        peticion.flash('mensaje', 'Publicación editada')
+      }
+      else{
+        peticion.flash('mensaje', 'Publicación no editada')
+      }
+      respuesta.redirect("/admin/index")
+    })
+    connection.release()
+  })
+})
+// Eliminar
+router.get('/admin/procesar_eliminar/:id', (peticion, respuesta) => {
+  pool.getConnection((err, connection) => {
+    const consulta = `
+      DELETE
+      FROM
+      publicaciones
+      WHERE
+      id = ${connection.escape(peticion.params.id)}
+      AND
+      autor_id = ${connection.escape(peticion.session.usuario.id)}
+    `
+    connection.query(consulta, (error, filas, campos) => {
+      if (filas && filas.affectedRows > 0){
+        peticion.flash('mensaje', 'Publicación eliminada')
+      }
+      else{
+        peticion.flash('mensaje', 'Publicación no eliminada')
+      }
+      respuesta.redirect("/admin/index")
+    })
+    connection.release()
+  })
+})
+// -------      Fin Módulo Editar y Eliminar Publicacion -------------- //
+
 
 module.exports = router
