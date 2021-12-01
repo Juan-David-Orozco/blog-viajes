@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Blog Viajes</title>
+  <link rel="stylesheet" href="stylesheets/estilos.css">
+  <link rel="stylesheet" href="stylesheets/mini-default.min.css">
+</head>
+
+<body>
+  <% include ./partials/encabezado_publico %>
+
+  <div class="container">
+    <img src="images/fondo.jpg" width="100%">
+    <h1>Inicio</h1>
+    <p>Aquí nuestras últimas publicaciones:</p>
+
+    <div class="row">
+
+      <% publicaciones.forEach(publicacion => { %>
+      <div class="col-sm-12">
+        <div class="card fluid ">
+          <h3 class="section"><a href="#">
+              <%=publicacion.titulo%></a> <mark class="tag">
+              <%=publicacion.votos%></mark></h3>
+          <h6 class="section dark">
+            <span class="icon-user"></span>
+            <%=publicacion.pseudonimo%> -
+            <span class="icon-calendar"></span>
+            <%=publicacion.fecha_hora.getFullYear() %>/
+            <%=publicacion.fecha_hora.getMonth()+1 %>/
+            <%=publicacion.fecha_hora.getDate() %>
+          </h6>
+          <p>
+            <%=publicacion.resumen %>
+          </p>
+        </div>
+      </div>
+      <% }) %>
+
+    </div>
+
+  </div>
+
+  <% include ./partials/pie %>
+  <script src="javascripts/script.js"></script>
+</body>
+
+</html>
