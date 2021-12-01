@@ -20,6 +20,20 @@ aplicacion.use(session({ secret: 'token-muy-secreto', resave: true, saveUninitia
 aplicacion.use(flash())
 aplicacion.use(express.static('public'))
 
+/* Middleware para validar la existencia del objeto
+usuario obtenido mediante el objeto session existente
+al iniciar sesion ( Validacion de Inicio de Sesión) */
+aplicacion.use('/admin/', (peticion, respuesta, siguiente) => {
+  if (!peticion.session.usuario) {
+    peticion.flash('mensaje', 'Debe iniciar sesión')
+    respuesta.redirect("/inicio")
+  }
+  else {
+    siguiente()
+  }
+})
+
+// -------      Módulo Inicio -------------- //
 aplicacion.get('/', function (peticion, respuesta) {
   pool.getConnection(function(err, connection) {
     const consulta = `
@@ -37,7 +51,9 @@ aplicacion.get('/', function (peticion, respuesta) {
     connection.release()
   })
 })
+// -------      Fin Módulo Inicio -------------- //
 
+// -------      Módulo Registro -------------- // 
 aplicacion.get('/registro', function (peticion, respuesta) {
   respuesta.render('registro', { mensaje: peticion.flash('mensaje') })
 })
@@ -87,7 +103,48 @@ aplicacion.post('/procesar_registro', function (peticion, respuesta) {
 
   })
 })
+// -------     Fin Módulo Registro -------------- //
 
+// -------      Módulo Inicio de Sesión -------------- // 
+aplicacion.get('/inicio', function (peticion, respuesta) {
+  respuesta.render('inicio', { mensaje: peticion.flash('mensaje') })
+})
+
+aplicacion.post('/procesar_inicio', function (peticion, respuesta) {
+  pool.getConnection(function (err, connection) {
+    const consulta = `
+      SELECT *
+      FROM autores
+      WHERE
+      email = ${connection.escape(peticion.body.email)} AND
+      contrasena = ${connection.escape(peticion.body.contrasena)}
+    `
+    connection.query(consulta, function (error, filas, campos) {
+      if (filas.length > 0) {
+        peticion.session.usuario = filas[0]
+        respuesta.redirect('/admin/index')
+      }
+      else {
+        peticion.flash('mensaje', 'Datos inválidos')
+        respuesta.redirect('/inicio')
+      }
+
+    })
+    connection.release()
+  })
+})
+
+aplicacion.get('/admin/index', function (peticion, respuesta) {
+  respuesta.render('admin/index', { usuario: peticion.session.usuario, mensaje: peticion.flash('mensaje') })
+})
+
+aplicacion.get('/procesar_cerrar_sesion', function (peticion, respuesta) {
+  peticion.session.destroy();
+  respuesta.redirect("/")
+});
+// -------     Fin Módulo Inicio de Sesión -------------- // 
+
+/* CONEXIÓN SERVER - PUERTO 8080 */
 aplicacion.listen(8080, function(){
   console.log("Servidor iniciado")
 })
