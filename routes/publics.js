@@ -135,4 +135,24 @@ router.post('/procesar_inicio', function (peticion, respuesta) {
 })
 // -------      Fin Módulo Inicio de Sesión -------------- // 
 
+router.get('/publicacion/:id', (peticion, respuesta) => {
+  pool.getConnection((err, connection) => {
+    const consulta = `
+      SELECT *
+      FROM publicaciones
+      WHERE id = ${connection.escape(peticion.params.id)}
+    `
+    connection.query(consulta, (error, filas, campos) => {
+      console.log(consulta)
+      if (filas.length > 0) {
+        respuesta.render('publicacion', { publicacion: filas[0] })
+      }
+      else {
+        respuesta.redirect('/')
+      }
+    })
+    connection.release()
+  })
+})
+
 module.exports = router
