@@ -13,17 +13,40 @@ var pool = mysql.createPool({
 // -------      Módulo Inicio -------------- //
 router.get('/', function (peticion, respuesta) {
   pool.getConnection(function(err, connection) {
-    const consulta = `
+    let consulta
+    let modificadorConsulta = ""
+    let modificadorPagina = ""
+    let pagina = 0
+    const busqueda = (peticion.query.busqueda) ? peticion.query.busqueda : ""
+    if (busqueda != ""){
+      modificadorConsulta = `
+      WHERE
+      titulo LIKE '%${busqueda}%' OR
+      resumen LIKE '%${busqueda}%' OR
+      contenido LIKE '%${busqueda}%'
+      `
+      modificadorPagina = ""
+    }
+    else{
+      pagina = (peticion.query.pagina) ? parseInt(peticion.query.pagina) : 0
+      if (pagina < 0) {
+        pagina= 0
+      }
+      modificadorPagina = `LIMIT 5 OFFSET ${pagina*5}`
+
+    }
+    consulta = `
       SELECT
       titulo, resumen, fecha_hora, pseudonimo, votos
       FROM publicaciones
       INNER JOIN autores
       ON publicaciones.autor_id = autores.id
+      ${modificadorConsulta}
       ORDER BY fecha_hora DESC
-      LIMIT 5
+      ${modificadorPagina}
     `
     connection.query(consulta, function (error, filas, campos) {
-      respuesta.render('index', { publicaciones: filas })
+      respuesta.render('index', { publicaciones: filas, busqueda: busqueda, pagina: pagina })
     })
     connection.release()
   })

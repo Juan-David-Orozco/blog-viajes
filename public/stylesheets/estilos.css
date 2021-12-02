@@ -8,3 +8,13 @@ html {
   top: 14px;
   right: 18px;
 }
+
+form.buscador{
+  padding: 0;
+  text-align: center;
+}
+
+p.centrado{
+  padding: 0;
+  text-align: center;
+}
