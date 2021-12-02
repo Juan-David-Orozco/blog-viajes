@@ -19,6 +19,16 @@
     <p>Aquí nuestras últimas publicaciones:</p>
 
     <div class="row">
+      <div class="col-sm-12">
+        <form action="/" class="buscador">
+          <label for="busqueda">Buscar publicación</label>
+          <input type="text" name="busqueda" id="busqueda" value="<%=busqueda%>">
+          <button type="submit"><span class="icon-search"></span>Buscar</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="row">
 
       <% publicaciones.forEach(publicacion => { %>
       <div class="col-sm-12">
