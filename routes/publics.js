@@ -15,6 +15,8 @@ router.get('/', function (peticion, respuesta) {
   pool.getConnection(function(err, connection) {
     let consulta
     let modificadorConsulta = ""
+    let modificadorPagina = ""
+    let pagina = 0
     const busqueda = (peticion.query.busqueda) ? peticion.query.busqueda : ""
     if (busqueda != ""){
       modificadorConsulta = `
@@ -23,6 +25,15 @@ router.get('/', function (peticion, respuesta) {
       resumen LIKE '%${busqueda}%' OR
       contenido LIKE '%${busqueda}%'
       `
+      modificadorPagina = ""
+    }
+    else{
+      pagina = (peticion.query.pagina) ? parseInt(peticion.query.pagina) : 0
+      if (pagina < 0) {
+        pagina= 0
+      }
+      modificadorPagina = `LIMIT 5 OFFSET ${pagina*5}`
+
     }
     consulta = `
       SELECT
@@ -32,9 +43,10 @@ router.get('/', function (peticion, respuesta) {
       ON publicaciones.autor_id = autores.id
       ${modificadorConsulta}
       ORDER BY fecha_hora DESC
+      ${modificadorPagina}
     `
     connection.query(consulta, function (error, filas, campos) {
-      respuesta.render('index', { publicaciones: filas, busqueda: busqueda })
+      respuesta.render('index', { publicaciones: filas, busqueda: busqueda, pagina: pagina })
     })
     connection.release()
   })
