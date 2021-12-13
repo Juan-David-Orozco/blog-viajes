@@ -28,7 +28,7 @@
         </h4>
         <% } %>
 
-        <form action="/admin/procesar_agregar" method="POST">
+        <form action="/admin/procesar_agregar" method="POST" enctype="multipart/form-data">
           <fieldset>
             <legend>Datos de publicación</legend>
             <p>
@@ -45,6 +45,11 @@
               <label for="contenido">Contenido</label>
               <br>
               <textarea id="contenido" name="contenido"></textarea>
+            </p>
+            <p>
+              <label for="foto">Foto</label>
+              <br>
+              <input type="file" id="foto" name="foto"/>
             </p>
 
             <p>

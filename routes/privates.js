@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const mysql = require('mysql2')
+var path = require('path')
 
 var pool = mysql.createPool({
   connectionLimit: 20,
@@ -54,8 +55,26 @@ router.post('/admin/procesar_agregar', (peticion, respuesta) => {
       )
     `
     connection.query(consulta, (error, filas, campos) => {
-      peticion.flash('mensaje', 'Publicación agregada')
-      respuesta.redirect("/admin/index")
+      if (peticion.files && peticion.files.foto){
+        const archivoFoto = peticion.files.foto
+        const id = filas.insertId
+        const nombreArchivo = `${id}${path.extname(archivoFoto.name)}`
+        archivoFoto.mv(`./public/publicaciones/${nombreArchivo}`, (error) => {
+          const consultaFoto = `
+            UPDATE publicaciones SET
+            foto = ${connection.escape(nombreArchivo)}
+            WHERE id = ${connection.escape(id)}
+          `
+          connection.query(consultaFoto, (error, filas, campos) => {
+            peticion.flash('mensaje', 'Publicación agregada con foto')
+            respuesta.redirect('/admin/index')
+          })
+        })
+      }
+      else{
+        peticion.flash('mensaje', 'Publicación agregada')
+        respuesta.redirect("/admin/index")
+      }
     })
     connection.release()
   })

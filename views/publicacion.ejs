@@ -21,6 +21,9 @@
         </h1>
         <div>
           <%-publicacion.contenido%>
+          <% if (publicacion.foto && publicacion.foto != "") {  %>
+            <img class="foto" src="/publicaciones/<%=publicacion.foto%>" >
+          <% } %>
         </div>
       </div>
     </div>

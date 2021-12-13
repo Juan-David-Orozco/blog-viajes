@@ -21,4 +21,9 @@ p.centrado{
 
 img.avatar{
   max-height: 15px
-} 
+}
+
+.foto{
+  max-height: 400px;
+  width: 100%;
+}
