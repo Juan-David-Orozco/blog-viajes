@@ -119,11 +119,35 @@ router.post('/admin/procesar_editar', (peticion, respuesta) => {
       autor_id = ${connection.escape(peticion.session.usuario.id)}
     `
     connection.query(consulta, (error, filas, campos) => {
+      if (peticion.files && peticion.files.foto){
+        const archivoFoto = peticion.files.foto
+        const id = peticion.body.id
+        const nombreArchivo = `${id}${path.extname(archivoFoto.name)}`
+        archivoFoto.mv(`./public/publicaciones/${nombreArchivo}`, (error) => {
+          const consultaFoto = `
+            UPDATE publicaciones SET
+            foto = ${connection.escape(nombreArchivo)}
+            WHERE id = ${connection.escape(id)}
+          `
+          connection.query(consultaFoto, (error, filas, campos) => {
+          })
+        })
+      }
       if (filas && filas.changedRows > 0){
-        peticion.flash('mensaje', 'Publicación editada')
+        if(peticion.files && peticion.files.foto){
+          peticion.flash('mensaje', 'Publicación editada con foto')
+        }
+        else{
+          peticion.flash('mensaje', 'Publicación editada')
+        }
       }
       else{
-        peticion.flash('mensaje', 'Publicación no editada')
+        if(peticion.files && peticion.files.foto){
+          peticion.flash('mensaje', 'Actualización foto satisfactoria')
+        }
+        else{
+          peticion.flash('mensaje', 'Publicación no editada')
+        }
       }
       respuesta.redirect("/admin/index")
     })

@@ -28,7 +28,7 @@
         </h4>
         <% } %>
 
-        <form action="/admin/procesar_editar" method="POST">
+        <form action="/admin/procesar_editar" method="POST" enctype="multipart/form-data">
           <input type="hidden" name="id" value="<%=publicacion.id%>">
           <fieldset>
             <legend>Datos de publicación</legend>
@@ -46,6 +46,11 @@
               <label for="contenido">Contenido</label>
               <br>
               <textarea id="contenido" name="contenido"><%=publicacion.contenido%></textarea>
+            </p>
+            <p>
+              <label for="foto">Foto</label>
+              <br>
+              <input type="file" id="foto" name="foto"/>
             </p>
 
             <p>
