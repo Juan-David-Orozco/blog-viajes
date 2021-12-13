@@ -37,7 +37,12 @@
               <%=publicacion.titulo%></a> <mark class="tag">
               <%=publicacion.votos%></mark></h3>
           <h6 class="section dark">
-            <span class="icon-user"></span>
+            <% if (publicacion.avatar && publicacion.avatar != "") {  %>
+              <img class="avatar" src="/avatars/<%=publicacion.avatar%>" >
+            <% } else {
+            %>
+              <span class="icon-user"></span>
+            <% } %>
             <%=publicacion.pseudonimo%> -
             <span class="icon-calendar"></span>
             <%=publicacion.fecha_hora.getFullYear() %>/

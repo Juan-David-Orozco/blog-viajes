@@ -38,7 +38,7 @@ router.get('/', function (peticion, respuesta) {
     }
     consulta = `
       SELECT
-      publicaciones.id id, titulo, resumen, fecha_hora, pseudonimo, votos
+      publicaciones.id id, titulo, resumen, fecha_hora, pseudonimo, votos, avatar
       FROM publicaciones
       INNER JOIN autores
       ON publicaciones.autor_id = autores.id

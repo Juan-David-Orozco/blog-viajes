@@ -18,3 +18,7 @@ p.centrado{
   padding: 0;
   text-align: center;
 }
+
+img.avatar{
+  max-height: 15px
+} 
