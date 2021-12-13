@@ -2,7 +2,30 @@ const express = require('express')
 const router = express.Router()
 const mysql = require('mysql2')
 var path = require('path')
+const nodemailer = require('nodemailer')
 
+// *******   Módulo envio correo ***** //
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'judorozcocl29@gmail.com',
+    pass: 'oimvoegwerrpgjgb'
+  }
+})
+
+function enviarCorreoBienvenida(email, nombre){
+  const opciones = {
+    from: 'judorozcocl29@gmail.com',
+    to: email,
+    subject: 'Bienvenido al blog de viajes',
+    text: `Hola ${nombre}`
+  }
+  transporter.sendMail(opciones, (error, info) => {
+  });
+}
+// *******  Fin Módulo envio correo ***** //
+
+// Pool de conexiones - Conexion DB blog_viajes //
 var pool = mysql.createPool({
   connectionLimit: 20,
   host: 'localhost',
@@ -104,12 +127,14 @@ router.post('/procesar_registro', function (peticion, respuesta) {
                     WHERE id = ${connection.escape(id)}
                   `
                   connection.query(consultaAvatar, (error, filas, campos) => {
+                    enviarCorreoBienvenida(email, pseudonimo)
                     peticion.flash('mensaje', 'Usuario registrado con avatar')
                     respuesta.redirect('/registro')
                   })
                 })
               }
               else{
+                enviarCorreoBienvenida(email, pseudonimo)
                 peticion.flash('mensaje', 'Usuario registrado')
                 respuesta.redirect('/registro')
               }
@@ -156,7 +181,7 @@ router.post('/procesar_inicio', function (peticion, respuesta) {
 })
 // -------      Fin Módulo Inicio de Sesión -------------- // 
 
-// -------      Ruta detalle publicación -------------- //
+// -------      Módulo detalle publicación -------------- //
 router.get('/publicacion/:id', (peticion, respuesta) => {
   pool.getConnection((err, connection) => {
     const consulta = `
@@ -175,9 +200,9 @@ router.get('/publicacion/:id', (peticion, respuesta) => {
     connection.release()
   })
 })
-// -------      Fin Ruta detalle publicación -------------- //
+// -------      Fin Módulo detalle publicación -------------- //
 
-// -------      Modulo Autores -------------- //
+// -------      Módulo Autores -------------- //
 router.get('/autores', (peticion, respuesta) => {
 
   pool.getConnection((err, connection) => {
@@ -213,8 +238,9 @@ router.get('/autores', (peticion, respuesta) => {
   })
 
 })
-// -------     Fin Modulo Autores -------------- //
+// -------     Fin Módulo Autores -------------- //
 
+// -------          Módulo votar         -----------//
 router.get('/publicacion/:id/votar', (peticion, respuesta) => {
   pool.getConnection((err, connection) => {
     const consulta = `
@@ -240,5 +266,6 @@ router.get('/publicacion/:id/votar', (peticion, respuesta) => {
     connection.release()
   })
 })
+// -------        Fin Módulo votar       -----------//
 
 module.exports = router
