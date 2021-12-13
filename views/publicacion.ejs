@@ -18,7 +18,15 @@
       <div class="col-sm-12">
         <h1>
           <%=publicacion.titulo%>
+          <mark class="tag">
+            <%=publicacion.votos%>
+          </mark>
         </h1>
+        <a
+          class="button small primary"
+          href="/publicacion/<%=publicacion.id%>/votar">
+            Votar (+1)
+        </a>
         <div>
           <%-publicacion.contenido%>
           <% if (publicacion.foto && publicacion.foto != "") {  %>

@@ -215,4 +215,30 @@ router.get('/autores', (peticion, respuesta) => {
 })
 // -------     Fin Modulo Autores -------------- //
 
+router.get('/publicacion/:id/votar', (peticion, respuesta) => {
+  pool.getConnection((err, connection) => {
+    const consulta = `
+      SELECT * FROM publicaciones
+      WHERE id = ${connection.escape(peticion.params.id)}
+    `
+    connection.query(consulta, (error, filas, campos) => {
+      if (filas.length > 0) {
+        const consultaVoto = `
+          UPDATE publicaciones SET
+          votos = votos + 1
+          WHERE id = ${connection.escape(peticion.params.id)}
+        `
+        connection.query(consultaVoto, (error, filas, campos) => {
+          respuesta.redirect(`/publicacion/${peticion.params.id}`)
+        })
+      }
+      else {
+        peticion.flash('mensaje', 'Publicacion invalida')
+        respuesta.redirect('/')
+      }
+    })
+    connection.release()
+  })
+})
+
 module.exports = router
