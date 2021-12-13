@@ -33,7 +33,7 @@
       <% publicaciones.forEach(publicacion => { %>
       <div class="col-sm-12">
         <div class="card fluid ">
-          <h3 class="section"><a href="#">
+          <h3 class="section"><a href="/publicacion/<%=publicacion.id%>">
               <%=publicacion.titulo%></a> <mark class="tag">
               <%=publicacion.votos%></mark></h3>
           <h6 class="section dark">

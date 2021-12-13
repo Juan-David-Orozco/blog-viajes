@@ -37,7 +37,7 @@ router.get('/', function (peticion, respuesta) {
     }
     consulta = `
       SELECT
-      titulo, resumen, fecha_hora, pseudonimo, votos
+      publicaciones.id id, titulo, resumen, fecha_hora, pseudonimo, votos
       FROM publicaciones
       INNER JOIN autores
       ON publicaciones.autor_id = autores.id
@@ -134,5 +134,26 @@ router.post('/procesar_inicio', function (peticion, respuesta) {
   })
 })
 // -------      Fin Módulo Inicio de Sesión -------------- // 
+
+// -------      Ruta detalle publicación -------------- //
+router.get('/publicacion/:id', (peticion, respuesta) => {
+  pool.getConnection((err, connection) => {
+    const consulta = `
+      SELECT *
+      FROM publicaciones
+      WHERE id = ${connection.escape(peticion.params.id)}
+    `
+    connection.query(consulta, (error, filas, campos) => {
+      if (filas.length > 0) {
+        respuesta.render('publicacion', { publicacion: filas[0] })
+      }
+      else {
+        respuesta.redirect('/')
+      }
+    })
+    connection.release()
+  })
+})
+// -------      Fin Ruta detalle publicación -------------- //
 
 module.exports = router
