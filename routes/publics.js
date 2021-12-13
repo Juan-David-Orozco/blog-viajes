@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const mysql = require('mysql2')
+var path = require('path')
 
 var pool = mysql.createPool({
   connectionLimit: 20,
@@ -91,8 +92,28 @@ router.post('/procesar_registro', function (peticion, respuesta) {
             )
             `
             connection.query(consulta, function (error, filas, campos) {
-              peticion.flash('mensaje', 'Usuario Registrado')
-              respuesta.redirect('/registro')
+
+              if (peticion.files && peticion.files.avatar){
+                const archivoAvatar = peticion.files.avatar
+                const id = filas.insertId
+                const nombreArchivo = `${id}${path.extname(archivoAvatar.name)}`
+                archivoAvatar.mv(`./public/avatars/${nombreArchivo}`, (error) => {
+                  const consultaAvatar = `
+                    UPDATE autores SET
+                    avatar = ${connection.escape(nombreArchivo)}
+                    WHERE id = ${connection.escape(id)}
+                  `
+                  connection.query(consultaAvatar, (error, filas, campos) => {
+                    peticion.flash('mensaje', 'Usuario registrado con avatar')
+                    respuesta.redirect('/registro')
+                  })
+                })
+              }
+              else{
+                peticion.flash('mensaje', 'Usuario registrado')
+                respuesta.redirect('/registro')
+              }
+              
             })
           }
         })

@@ -3,6 +3,7 @@ const aplicacion = express()
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const flash = require('express-flash')
+const fileUpload = require('express-fileupload')
 // Se definen las enrutadores a utilizar para cada ruta especifica
 const rutasMiddleware = require('./routes/middleware') 
 const rutasPublicas = require('./routes/publics')
@@ -14,6 +15,7 @@ aplicacion.set("view engine", "ejs")
 aplicacion.use(session({ secret: 'token-muy-secreto', resave: true, saveUninitialized: true }));
 aplicacion.use(flash())
 aplicacion.use(express.static('public'))
+aplicacion.use(fileUpload())
 
 // Se usan los enrutadores que se definieron en cada uno de los archivos externos
 aplicacion.use(rutasMiddleware)
