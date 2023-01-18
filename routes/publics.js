@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const mysql = require('mysql2')
+const { connectDBMySQL } = require('../db')
 var path = require('path')
 const nodemailer = require('nodemailer')
 
@@ -26,13 +26,7 @@ function enviarCorreoBienvenida(email, nombre){
 // *******  Fin Módulo envio correo ***** //
 
 // Pool de conexiones - Conexion DB blog_viajes //
-var pool = mysql.createPool({
-  connectionLimit: 20,
-  host: 'localhost',
-  user: 'root',
-  password: 'juan',
-  database: 'blog_viajes'
-})
+const pool = connectDBMySQL()
 
 // -------      Módulo Inicio -------------- //
 router.get('/', function (peticion, respuesta) {

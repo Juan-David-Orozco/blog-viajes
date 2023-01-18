@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const flash = require('express-flash')
 const fileUpload = require('express-fileupload')
+const { PORT } = require('./config')
 // Se definen las enrutadores a utilizar para cada ruta especifica
 const rutasMiddleware = require('./routes/middleware') 
 const rutasPublicas = require('./routes/publics')
@@ -23,6 +24,6 @@ aplicacion.use(rutasPublicas)
 aplicacion.use(rutasPrivadas)
 
 /* CONEXIÓN SERVER - PUERTO 8080 */
-aplicacion.listen(8080, function(){
-  console.log("Servidor iniciado")
+aplicacion.listen(PORT, function(){
+  console.log("Servidor iniciado en puerto", PORT)
 })

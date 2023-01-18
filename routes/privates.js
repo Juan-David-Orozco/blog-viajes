@@ -1,15 +1,10 @@
 const express = require('express')
 const router = express.Router()
-const mysql = require('mysql2')
+const { connectDBMySQL } = require('../db')
 var path = require('path')
 
-var pool = mysql.createPool({
-  connectionLimit: 20,
-  host: 'localhost',
-  user: 'root',
-  password: 'juan',
-  database: 'blog_viajes'
-})
+// Pool de conexiones - Conexion DB blog_viajes //
+const pool = connectDBMySQL()
 
 // Ruta para redireccionar a la vista index privada
 router.get('/admin/index', function (peticion, respuesta) {
