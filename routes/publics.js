@@ -201,7 +201,7 @@ router.get('/autores', (peticion, respuesta) => {
 
   pool.getConnection((err, connection) => {
     const consulta = `
-      SELECT autores.id id, pseudonimo, avatar, publicaciones.id publicacion_id, titulo
+      SELECT autores.id id, pseudonimo, avatar, publicaciones.id publicacion_id, titulo, votos
       FROM autores
       INNER JOIN
       publicaciones ON
@@ -209,7 +209,7 @@ router.get('/autores', (peticion, respuesta) => {
       ORDER BY autores.id DESC, publicaciones.fecha_hora DESC
     `
     connection.query(consulta, (error, filas, campos) => {
-      autores = []
+      let autores = []
       ultimoAutorId = undefined
       filas.forEach(registro => {
         if (registro.id != ultimoAutorId){
@@ -223,7 +223,8 @@ router.get('/autores', (peticion, respuesta) => {
         }
         autores[autores.length-1].publicaciones.push({
           id: registro.publicacion_id,
-          titulo: registro.titulo
+          titulo: registro.titulo,
+          votos: registro.votos
         })
       });
       respuesta.render('autores', { autores: autores })

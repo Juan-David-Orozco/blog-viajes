@@ -35,7 +35,9 @@ router.get('/admin/agregar', (peticion, respuesta) => {
 router.post('/admin/procesar_agregar', (peticion, respuesta) => {
   pool.getConnection((err, connection) => {
     const date = new Date()
-    const fecha = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+    const fecha = `
+      ${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}
+    `
     const consulta = `
       INSERT INTO
       publicaciones

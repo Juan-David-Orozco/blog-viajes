@@ -34,7 +34,10 @@
           </h3>
           <ul>
             <% autor.publicaciones.forEach(publicacion => { %>
-              <li><a href="/publicacion/<%=publicacion.id%>"><%=publicacion.titulo%></a></li>
+              <li>
+                <a href="/publicacion/<%=publicacion.id%>"><%=publicacion.titulo%></a>
+                - <span id="votos-autores"> <mark class="tag"> <%=publicacion.votos%> </mark> </span>
+              </li>
             <% }) %>
           </ul>
         </div>

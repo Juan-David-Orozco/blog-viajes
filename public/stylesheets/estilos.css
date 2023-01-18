@@ -27,3 +27,13 @@ img.avatar{
   max-height: 400px;
   width: 100%;
 }
+
+#foto-publicaciones{
+  vertical-align: middle;
+  max-height : 100px;
+  width: 100%;
+}
+
+#votos-autores{
+  font-size: 12px;
+}

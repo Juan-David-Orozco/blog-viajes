@@ -33,6 +33,7 @@
               <th>titulo</th>
               <th>resumen</th>
               <th>votos</th>
+              <th>Foto</th>
               <th>acciones</th>
             </tr>
           </thead>
@@ -47,6 +48,13 @@
               </td>
               <td>
                 <%=publicacion.votos%>
+              </td>
+              <td>
+                <% if (publicacion.foto && publicacion.foto != "") {  %>
+                  <img id="foto-publicaciones" src="/publicaciones/<%=publicacion.foto%>" >
+                <% } else { %>
+                  <p> <i> Esta publicación no tiene imágen </i> </p>
+                <% } %>
               </td>
               <td>
                 <a href="/admin/editar/<%=publicacion.id%>"><span class="icon-edit"></span>
