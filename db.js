@@ -7,7 +7,8 @@ const connectDBMySQL = () => {
     host: db.host,
     user: db.user,
     password: db.password,
-    database: db.dbname
+    database: db.dbname,
+    port: db.port
   })
   return pool
 }
