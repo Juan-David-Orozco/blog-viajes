@@ -1,9 +1,10 @@
 {
-  "name": "ejercicio2",
+  "name": "blog-viajes",
   "version": "1.0.0",
   "description": "",
   "main": "webapp.js",
   "scripts": {
+    "start": "node webapp.js",
     "dev": "nodemon webapp.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
